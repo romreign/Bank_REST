@@ -138,6 +138,57 @@ databaseChangeLog:
                     defaultValueComputed: CURRENT_TIMESTAMP
                     constraints:
                       nullable: false
+  - changeSet:
+      id: 2
+      author: romreign
+      changes:
+        - createTable:
+            tableName: card_lock_requests
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    autoIncrement: true
+              - column:
+                  name: card_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_card_lock_requests_card_id
+                    references: cards(id)
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_card_lock_requests_user_id
+                    references: users(id)
+              - column:
+                  name: status
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: reason
+                  type: VARCHAR(65)
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: processed_at
+                  type: TIMESTAMP
+              - column:
+                  name: processed_by
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_card_lock_requests_processed_by_id
+                    references: users(id)
         - addUniqueConstraint:
             constraintName: uk_cards_user_encrypted
             tableName: cards

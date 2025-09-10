@@ -11,6 +11,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -55,9 +56,12 @@ public class Card {
         this.balance = balance;
     }
 
-    @OneToMany(mappedBy = "fromCard", fetch = FetchType.LAZY)
-    private List<Transfer> outgoingTransfers;
+    @OneToMany(mappedBy = "fromCard", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Transfer> outgoingTransfers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "toCard", fetch = FetchType.LAZY)
-    private List<Transfer> incomingTransfers;
+    @OneToMany(mappedBy = "toCard", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Transfer> incomingTransfers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "card", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<CardLockRequest> lockRequests = new ArrayList<>();
 }

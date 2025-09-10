@@ -71,4 +71,10 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Card> cards = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<CardLockRequest> createdLockRequests = new ArrayList<>();
+
+    @OneToMany(mappedBy = "processedBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<CardLockRequest> processedLockRequests = new ArrayList<>();
 }
