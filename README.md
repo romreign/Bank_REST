@@ -1,7 +1,7 @@
 # Bank Cards Management System
 
 ## Prerequisites
-- Java 17
+- Java 24
 - Maven
 - Docker
 - PostgreSQL
@@ -18,5 +18,5 @@
 - `/api/auth/login` - Login and get JWT
 - `/api/admin/**` - Admin endpoints (require ADMIN role)
 - `/api/user/**` - User endpoints (require USER role)
+- '/swagger-ui.html' - Swagger endpoint
 
-## FullStack
