@@ -4,7 +4,7 @@ spring:
   liquibase:
     enabled: true
     drop-first: false
-    change-log: classpath:db/migration/schema.yaml
+    change-log: classpath:db/migration/schema.yml, classpath:db/migration/data.yml
     default-schema: public
   datasource:
     url: jdbc:postgresql://localhost:5555/bank_db
@@ -18,10 +18,9 @@ spring:
     properties.hibernate:
       dialect: org.hibernate.dialect.PostgreSQLDialect
       format_sql: true
+  jwt:
+    secret-key: "91ebaabcb0adf86142ae9cafa869a8fc173ad3151b7256da752e1b20104459cf"
+    expiration: 86400000
 
 
-# Что нужно сделать:
-  #- Указать настройки подключения к базе данных. +
-  #- Указать порт приложения. +
-  #- Настроить параметры безопасности и JWT.
   #- Включить Swagger UI.

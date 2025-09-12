@@ -5,12 +5,14 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -18,7 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -58,8 +60,7 @@ public class User {
     @Column(name = "birthday", nullable = false)
     private LocalDate birthday;
 
-    public User(Role role, String login, String password, String surname, String name,
-                String patronymic, LocalDate birthday) {
+    public User(Role role, String login, String password, String surname, String name, String patronymic, LocalDate birthday) {
         this.role = role;
         this.login = login;
         this.password = password;
@@ -77,4 +78,88 @@ public class User {
 
     @OneToMany(mappedBy = "processedBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<CardLockRequest> processedLockRequests = new ArrayList<>();
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.getName()));
+    }
+
+    @Override
+    public String getUsername() {
+        return login;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+    public static UserBuilder builder() {
+        return new UserBuilder();
+    }
+
+    public static class UserBuilder {
+        private Role role;
+        private String login;
+        private String password;
+        private String surname;
+        private String name;
+        private String patronymic;
+        private LocalDate birthday;
+
+        public UserBuilder role(Role role) {
+            this.role = role;
+            return this;
+        }
+
+        public UserBuilder login(String login) {
+            this.login = login;
+            return this;
+        }
+
+        public UserBuilder password(String password) {
+            this.password = password;
+            return this;
+        }
+
+        public UserBuilder surname(String surname) {
+            this.surname = surname;
+            return this;
+        }
+
+        public UserBuilder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public UserBuilder patronymic(String patronymic) {
+            this.patronymic = patronymic;
+            return this;
+        }
+
+        public UserBuilder birthday(LocalDate birthday) {
+            this.birthday = birthday;
+            return this;
+        }
+
+        public User build() {
+            return new User(role, login, password, surname, name, patronymic, birthday);
+        }
+    }
 }
