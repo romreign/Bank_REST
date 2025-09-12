@@ -18,5 +18,5 @@
 - `/api/auth/login` - Login and get JWT
 - `/api/admin/**` - Admin endpoints (require ADMIN role)
 - `/api/user/**` - User endpoints (require USER role)
-- '/swagger-ui.html' - Swagger endpoint
+- `/swagger-ui.html` - Swagger endpoint
 
