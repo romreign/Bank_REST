@@ -7,7 +7,7 @@
 - PostgreSQL
 
 ## Setup
-1. Clone the repository: `git clone https://github.com/PaatoM/Bank_REST`
+1. Clone the repository: `git clone https://github.com/romreign/Bank_REST`
 2. Configure `application.yml` with your database settings.
 3. Run `docker-compose.yml` to start PostgreSQL and pgAdmin: `docker-compose up -d`
 4. Build and run the application:
