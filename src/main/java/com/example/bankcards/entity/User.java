@@ -1,0 +1,165 @@
+package com.example.bankcards.entity;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Size;
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+@Entity
+@Table(name = "users")
+@NoArgsConstructor
+@Getter
+@Setter
+public class User implements UserDetails {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotNull(message = "Role cannot be null")
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "role_id", nullable = false)
+    private Role role;
+
+    @NotBlank(message = "Login cannot be blank")
+    @Size(min = 3, max = 50, message = "Login must be between 3 and 50 characters")
+    @Column(name = "login", nullable = false, unique = true)
+    private String login;
+
+    @NotBlank(message = "Password cannot be blank")
+    @Size(min = 6, message = "Password must be at least 6 characters")
+    @Column(name = "password", nullable = false)
+    private String password;
+
+    @NotBlank(message = "Surname cannot be blank")
+    @Size(max = 35, message = "Surname must be less than 35 characters")
+    @Column(name = "surname", nullable = false)
+    private String surname;
+
+    @NotBlank(message = "Name cannot be blank")
+    @Size(max = 35, message = "Name must be less than 35 characters")
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    @Size(max = 35, message = "Patronymic must be less than 35 characters")
+    @Column(name = "patronymic")
+    private String patronymic;
+
+    @NotNull(message = "Birthday cannot be null")
+    @Past(message = "Birthday must be in the past")
+    @Column(name = "birthday", nullable = false)
+    private LocalDate birthday;
+
+    public User(Role role, String login, String password, String surname, String name, String patronymic, LocalDate birthday) {
+        this.role = role;
+        this.login = login;
+        this.password = password;
+        this.surname = surname;
+        this.name = name;
+        this.patronymic = patronymic;
+        this.birthday = birthday;
+    }
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Card> cards = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<CardLockRequest> createdLockRequests = new ArrayList<>();
+
+    @OneToMany(mappedBy = "processedBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<CardLockRequest> processedLockRequests = new ArrayList<>();
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.getName()));
+    }
+
+    @Override
+    public String getUsername() {
+        return login;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+    public static UserBuilder builder() {
+        return new UserBuilder();
+    }
+
+    public static class UserBuilder {
+        private Role role;
+        private String login;
+        private String password;
+        private String surname;
+        private String name;
+        private String patronymic;
+        private LocalDate birthday;
+
+        public UserBuilder role(Role role) {
+            this.role = role;
+            return this;
+        }
+
+        public UserBuilder login(String login) {
+            this.login = login;
+            return this;
+        }
+
+        public UserBuilder password(String password) {
+            this.password = password;
+            return this;
+        }
+
+        public UserBuilder surname(String surname) {
+            this.surname = surname;
+            return this;
+        }
+
+        public UserBuilder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public UserBuilder patronymic(String patronymic) {
+            this.patronymic = patronymic;
+            return this;
+        }
+
+        public UserBuilder birthday(LocalDate birthday) {
+            this.birthday = birthday;
+            return this;
+        }
+
+        public User build() {
+            return new User(role, login, password, surname, name, patronymic, birthday);
+        }
+    }
+}

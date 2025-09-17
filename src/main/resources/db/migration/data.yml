@@ -1,0 +1,54 @@
+databaseChangeLog:
+  - changeSet:
+      id: 3
+      author: romreign
+      changes:
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  value: 1
+              - column:
+                  name: name
+                  value: ADMIN
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  value: 2
+              - column:
+                  name: name
+                  value: USER
+  - changeSet:
+      id: 4
+      author: romreign
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  value: 1
+              - column:
+                  name: login
+                  value: admin
+              - column:
+                  name: password
+                  value: "$2a$10$8bJ8Z3z6t6Y6z3z6t6Y6ze8bJ8Z3z6t6Y6z3z6t6Y6ze8bJ8Z3z6t"
+              - column:
+                  name: role_id
+                  value: 1
+              - column:
+                  name: surname
+                  value: Иванов
+              - column:
+                  name: name
+                  value: Иван
+              - column:
+                  name: patronymic
+                  value: Иванович
+              - column:
+                  name: birthday
+                  value: 1980-01-01
