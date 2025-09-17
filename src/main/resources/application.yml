@@ -6,6 +6,8 @@ spring:
     drop-first: false
     change-log: classpath:db/migration/master.yml
     default-schema: public
+    parameters:
+      convertDataTypes: false
   datasource:
     url: jdbc:postgresql://localhost:5555/bank_db
     username: postgres
@@ -21,4 +23,3 @@ spring:
 jwt:
   secret-key: "91ebaabcb0adf86142ae9cafa869a8fc173ad3151b7256da752e1b20104459cf"
   expiration: 86400000
-

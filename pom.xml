@@ -16,7 +16,11 @@
         <license/>
     </licenses>
     <developers>
-        <developer/>
+        <developer>
+            <id>1</id>
+            <name>Roman Kurgannikov</name>
+            <email>kurgannikov.r@yandex.ru</email>
+        </developer>
     </developers>
     <scm>
         <connection/>
@@ -43,6 +47,7 @@
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
+            <version>4.29.2</version>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
