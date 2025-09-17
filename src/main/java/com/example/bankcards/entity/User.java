@@ -17,9 +17,11 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
+@Builder
 @NoArgsConstructor
 @Getter
 @Setter
+@AllArgsConstructor
 public class User implements UserDetails {
 
     @Id
@@ -60,7 +62,8 @@ public class User implements UserDetails {
     @Column(name = "birthday", nullable = false)
     private LocalDate birthday;
 
-    public User(Role role, String login, String password, String surname, String name, String patronymic, LocalDate birthday) {
+    public User(Role role, String login, String password, String surname, String name, String patronymic,
+                LocalDate birthday) {
         this.role = role;
         this.login = login;
         this.password = password;
@@ -108,58 +111,5 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-    public static UserBuilder builder() {
-        return new UserBuilder();
-    }
-
-    public static class UserBuilder {
-        private Role role;
-        private String login;
-        private String password;
-        private String surname;
-        private String name;
-        private String patronymic;
-        private LocalDate birthday;
-
-        public UserBuilder role(Role role) {
-            this.role = role;
-            return this;
-        }
-
-        public UserBuilder login(String login) {
-            this.login = login;
-            return this;
-        }
-
-        public UserBuilder password(String password) {
-            this.password = password;
-            return this;
-        }
-
-        public UserBuilder surname(String surname) {
-            this.surname = surname;
-            return this;
-        }
-
-        public UserBuilder name(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public UserBuilder patronymic(String patronymic) {
-            this.patronymic = patronymic;
-            return this;
-        }
-
-        public UserBuilder birthday(LocalDate birthday) {
-            this.birthday = birthday;
-            return this;
-        }
-
-        public User build() {
-            return new User(role, login, password, surname, name, patronymic, birthday);
-        }
     }
 }

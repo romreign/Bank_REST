@@ -1,6 +1,7 @@
 package com.example.bankcards.service;
 
 import com.example.bankcards.dto.transfer.TransferRequestDTO;
+import com.example.bankcards.dto.transfer.TransferResponseDTO;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.User;
 import com.example.bankcards.exception.CardNotBelongsToUserException;
@@ -8,6 +9,7 @@ import com.example.bankcards.exception.CardNotFoundException;
 import com.example.bankcards.exception.InsufficientBalanceException;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.repository.TransferRepository;
+import com.example.bankcards.security.SecurityContextService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -55,12 +57,9 @@ class TransferServiceTest {
         when(securityContextService.getCurrentUser()).thenReturn(currentUser);
         when(cardRepository.findByIdAndUserId(1L, 1L)).thenReturn(Optional.of(fromCard));
         when(cardRepository.findById(2L)).thenReturn(Optional.of(toCard));
-        when(transferRepository.save(any())).thenAnswer(invocation -> {
-            var transfer = invocation.getArgument(0);
-            return transfer;
-        });
+        when(transferRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
-        var response = transferService.transfer(request);
+        TransferResponseDTO response = transferService.transfer(request);
 
         assertNotNull(response);
         assertEquals(1L, response.getFromCardId());
@@ -84,9 +83,7 @@ class TransferServiceTest {
         when(securityContextService.getCurrentUser()).thenReturn(currentUser);
         when(cardRepository.findByIdAndUserId(1L, 1L)).thenReturn(Optional.empty());
 
-        assertThrows(CardNotBelongsToUserException.class, () -> {
-            transferService.transfer(request);
-        });
+        assertThrows(CardNotBelongsToUserException.class, () -> transferService.transfer(request));
     }
 
     @Test
@@ -105,9 +102,7 @@ class TransferServiceTest {
         when(cardRepository.findByIdAndUserId(1L, 1L)).thenReturn(Optional.of(fromCard));
         when(cardRepository.findById(2L)).thenReturn(Optional.empty());
 
-        assertThrows(CardNotFoundException.class, () -> {
-            transferService.transfer(request);
-        });
+        assertThrows(CardNotFoundException.class, () -> transferService.transfer(request));
     }
 
     @Test
@@ -130,8 +125,7 @@ class TransferServiceTest {
         when(cardRepository.findByIdAndUserId(1L, 1L)).thenReturn(Optional.of(fromCard));
         when(cardRepository.findById(2L)).thenReturn(Optional.of(toCard));
 
-        assertThrows(InsufficientBalanceException.class, () -> {
-            transferService.transfer(request);
-        });
+        assertThrows(InsufficientBalanceException.class, () -> transferService.transfer(request)
+        );
     }
 }

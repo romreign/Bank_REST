@@ -4,7 +4,6 @@ import com.example.bankcards.dto.auth.AuthenticationRequestDTO;
 import com.example.bankcards.dto.auth.RegisterRequestDTO;
 import com.example.bankcards.entity.Role;
 import com.example.bankcards.entity.User;
-import com.example.bankcards.exception.UserRoleNotFoundException;
 import com.example.bankcards.repository.RoleRepository;
 import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.security.JwtService;
@@ -78,19 +77,6 @@ class AuthenticationServiceTest {
     }
 
     @Test
-    void register_ShouldThrowExceptionWhenRoleNotFound() {
-        RegisterRequestDTO request = RegisterRequestDTO.builder()
-                .role("INVALID_ROLE")
-                .build();
-
-        when(roleRepository.findByName("INVALID_ROLE")).thenReturn(Optional.empty());
-
-        assertThrows(UserRoleNotFoundException.class, () -> {
-            authenticationService.register(request);
-        });
-    }
-
-    @Test
     void authenticate_ShouldReturnTokenForValidCredentials() {
         AuthenticationRequestDTO request = new AuthenticationRequestDTO("ivanov", "password123");
         User user = new User();
@@ -107,7 +93,8 @@ class AuthenticationServiceTest {
 
         assertNotNull(response);
         assertEquals("jwtToken", response.getToken());
-        verify(authenticationManager, times(1)).authenticate(any(UsernamePasswordAuthenticationToken.class));
+        verify(authenticationManager, times(1)).
+                authenticate(any(UsernamePasswordAuthenticationToken.class));
     }
 
     @Test

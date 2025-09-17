@@ -32,10 +32,10 @@ public class AuthenticationService {
 
     @Transactional
     public AuthenticationResponseDTO register(RegisterRequestDTO request) {
-        Role userRole = roleRepository.findByName(request.getRole())
+        Role userRole = roleRepository.findByName("USER")
                 .orElseThrow(() -> new UserRoleNotFoundException("Role not found"));
 
-        var user = User.builder()
+        User user = User.builder()
                 .surname(request.getSurname())
                 .name(request.getName())
                 .patronymic(request.getPatronymic())
@@ -57,8 +57,8 @@ public class AuthenticationService {
                 (new UsernamePasswordAuthenticationToken(
                         request.getLogin(),
                         request.getPassword()));
-        var user = userRepository.findByLogin(request.getLogin()).orElseThrow();
-        var jwToken = jwtService.generateToken(user);
+        User user = userRepository.findByLogin(request.getLogin()).orElseThrow();
+        String jwToken = jwtService.generateToken(user);
         return AuthenticationResponseDTO.builder()
                 .token(jwToken)
                 .build();

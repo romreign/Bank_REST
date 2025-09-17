@@ -74,6 +74,9 @@ public class CardService {
 
     @Transactional
     public CardResponseDTO addBalance(Long cardId, BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0)
+            throw new IllegalArgumentException("Amount must be positive");
+
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new CardNotFoundException("Card not found"));
 

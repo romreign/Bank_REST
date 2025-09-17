@@ -15,7 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,8 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")
-@Valid
+@Validated
 @Tag(name = "Admin API", description = "Administrative operations for managing users and cards")
 public class AdminController {
 
@@ -97,7 +96,8 @@ public class AdminController {
             @ApiResponse(responseCode = "400", description = "Invalid card data")
     })
     @PostMapping("/users/{userId}/cards")
-    public ResponseEntity<CardResponseDTO> createCard(@PathVariable long userId, @Valid @RequestBody CardRequestDTO card) {
+    public ResponseEntity<CardResponseDTO> createCard(@PathVariable long userId,
+                                                      @Valid @RequestBody CardRequestDTO card) {
         return ResponseEntity.ok(cardService.createCard(userId, card));
     }
 
@@ -108,7 +108,8 @@ public class AdminController {
             @ApiResponse(responseCode = "400", description = "Invalid lock request")
     })
     @PatchMapping("/cards/{cardId}/block")
-    public ResponseEntity<CardResponseDTO> blockCard(@PathVariable long cardId, @Valid @RequestBody CardLockRequestDTO cardRequest) {
+    public ResponseEntity<CardResponseDTO> blockCard(@PathVariable long cardId,
+                                                     @Valid @RequestBody CardLockRequestDTO cardRequest) {
         return ResponseEntity.ok(cardLockRequestService.processLockRequest(cardId, cardRequest, true));
     }
 

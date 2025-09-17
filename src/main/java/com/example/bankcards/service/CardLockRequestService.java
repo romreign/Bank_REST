@@ -12,6 +12,7 @@ import com.example.bankcards.exception.CardNotBelongsToUserException;
 import com.example.bankcards.exception.CardNotFoundException;
 import com.example.bankcards.repository.CardLockRequestRepository;
 import com.example.bankcards.repository.CardRepository;
+import com.example.bankcards.security.SecurityContextService;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -85,7 +86,7 @@ public class CardLockRequestService {
         return CardResponseDTO.fromEntity(updatedCard);
     }
 
-    private CardLockResponseDTO convertToDTO(CardLockRequest request) {
+    CardLockResponseDTO convertToDTO(CardLockRequest request) {
         return CardLockResponseDTO.builder()
                 .id(request.getId())
                 .cardId(request.getCard().getId())

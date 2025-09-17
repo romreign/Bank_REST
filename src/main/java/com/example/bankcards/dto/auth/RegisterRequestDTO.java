@@ -21,7 +21,6 @@ public class RegisterRequestDTO {
     @NotBlank(message = "Name cannot be blank")
     private String name;
 
-    @NotBlank(message = "Patronymic cannot be blank")
     private String patronymic;
 
     @NotBlank(message = "Login cannot be blank")
@@ -30,7 +29,6 @@ public class RegisterRequestDTO {
     @NotBlank(message = "Password cannot be blank")
     private String password;
 
-    @NotBlank(message = "Role cannot be blank")
     private String role;
 
     @NotNull(message = "Birthday cannot be null")

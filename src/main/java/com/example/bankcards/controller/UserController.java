@@ -7,17 +7,19 @@ import com.example.bankcards.dto.transfer.TransferRequestDTO;
 import com.example.bankcards.dto.transfer.TransferResponseDTO;
 import com.example.bankcards.service.CardLockRequestService;
 import com.example.bankcards.service.CardService;
-import com.example.bankcards.service.SecurityContextService;
+import com.example.bankcards.security.SecurityContextService;
 import com.example.bankcards.service.TransferService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -25,6 +27,7 @@ import java.math.BigDecimal;
 @RestController
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
+@Validated
 @Tag(name = "User API", description = "User operations for managing cards and transactions")
 public class UserController {
 
@@ -36,14 +39,16 @@ public class UserController {
 
     private final SecurityContextService securityContextService;
 
-    @Operation(summary = "Get user cards", description = "Retrieve paginated list of cards for a user. Admins can view any user's cards.")
+    @Operation(summary = "Get user cards",
+            description = "Retrieve paginated list of cards for a user. Admins can view any user's cards.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Successfully retrieved user cards"),
             @ApiResponse(responseCode = "403", description = "Access denied"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
     @GetMapping("/cards")
-    @PreAuthorize("#userId == null or @securityContextService.isCurrentUser(#userId) or @securityContextService.isAdmin()")
+    @PreAuthorize("#userId == null " +
+            "or @securityContextService.isCurrentUser(#userId) or @securityContextService.isAdmin()")
     public ResponseEntity<Page<CardResponseDTO>> getCards(
             @RequestParam(required = false) Long userId,
             @RequestParam(defaultValue = "0") int page,
@@ -84,7 +89,8 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "Card not found")
     })
     @GetMapping("/cards/{cardId}/balance")
-    @PreAuthorize("@cardService.isCardOwner(#cardId, @securityContextService.getCurrentUser().getId()) or @securityContextService.isAdmin()")
+    @PreAuthorize("@cardService.isCardOwner(#cardId, @securityContextService.getCurrentUser().getId())" +
+            " or @securityContextService.isAdmin()")
     public ResponseEntity<BigDecimal> getBalance(@PathVariable Long cardId) {
         return ResponseEntity.ok(cardService.getBalance(cardId));
     }
@@ -97,10 +103,14 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Invalid amount")
     })
     @PatchMapping("/cards/{cardId}/balance")
-    @PreAuthorize("@cardService.isCardOwner(#cardId, @securityContextService.getCurrentUser().getId()) or @securityContextService.isAdmin()")
+    @PreAuthorize("@cardService.isCardOwner(#cardId, @securityContextService.getCurrentUser().getId())" +
+            " or @securityContextService.isAdmin()")
     public ResponseEntity<CardResponseDTO> addBalance(
             @PathVariable Long cardId,
-            @RequestParam BigDecimal amount) {
+            @RequestParam @Positive BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0)
+            throw new IllegalArgumentException("Amount must be positive");
+
         return ResponseEntity.ok(cardService.addBalance(cardId, amount));
     }
 }
